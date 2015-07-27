@@ -1,0 +1,18 @@
+#####################################
+2015/07/21
+
+
+From Jim Diehl's notebook
+===================
+TM1: 192.168.1.146
+
+TM2 (and TM3 someday): 192.168.1.80
+
+######################################
+2015/07/22
+
+Today we're using an old Dell tower with a decom card in it to do TM3; yesterday we were having issues pulling TM2 and TM3 from the same ALTAIR because the TM3 link won't allow us to set it as a synchronous channel; the practical implication is that we get a ton of extra timestamps with each packet, and I haven't written the code to discard timestamps from RxDSP data. 
+
+Dell IP: 192.168.2.24
+Subnet mask: 255.255.255.0
+

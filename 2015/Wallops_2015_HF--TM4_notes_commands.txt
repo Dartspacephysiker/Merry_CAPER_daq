@@ -1,0 +1,15 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+HF STUFF @ Wallops--JUL 21 2015, 14:13
+!!NOTE: I just learned from David McGaw that Wallops can only drive 1 Vpp, so I'm going to try to set all relevant scripts to only digitize with a range of 1 Vpp.
+
+2015/07/21
+Today I think we're just making sure that things turn on. Probably tomorrow we'll do some actual tests.
+
+
+Digitization @ 20MHz
+============================
+---Freq
+#sudo ./Wallops_2015_cal_script.sh Wallops_2015_cal-- 65536 20000000 1
+#sudo ./Wallops_2015_cal_script.sh Wallops_2015_cal-- 65536 20000000 1
+
+

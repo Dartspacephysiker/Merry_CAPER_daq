@@ -1,0 +1,196 @@
+12/30/2014 Edits
+12/20/2014 at Las Vegas Airport
+
+This is only meant to be an INTRODUCTION to the various types of data to be found in these folders. Almost every set of data has more detailed notes
+   regarding acquisition in the directory <CAPER data dir>/
+     In summary, there are currently four types you'll be dealing with:
+
+1. Digitizer data produced during summer 2014 calibrations. This pertains to SKIN, ELF, VF, VLF, VLF-AGC, HF, and HF-AGC data produced in the lab.
+
+2. RxDSP data produced during summer 2014 calibrations.
+
+3. Data recorded at Wallops in summer/fall 2014. These data were recorded in various manners:
+   a) Data recorded through the DEWETRONs:
+	i)  TM1 (includes all SKIN, ELF, VF, VLF, VLF-AGC, and HF-AGC, but NOT HF itself, which is TM4)
+	ii) TM2 (Master RxDSP) and TM3 (Slave RxDSP)
+   b) HF (sometimes referred to as baseband)
+
+4) Data recorded in Norway. All channels were recorded in a manner identical to that used for the Wallops visits in the summer--that is, 
+   either digitized directly (HF) or recorded through the DEWETRONs over TCP/IP (RxDSPs--TM2 and TM3, SKIN,ELF,VF,VLF,VLF-AGC,HF-AGC--TM1)--with 
+   a single exception:
+	The DUAL-A and DUAL-B tests, which were recorded by the TM people using a Wideband systems recorder; these are in .ch10 format, 
+	and require a special library to yank the data out...
+
+***************************
+DETAILS FOR EACH DATA TYPE ABOVE
+***************************
+
+1. Summer 2014 Digitizer Data
+   	*Channels/instruments:			  All SKIN, ELF, VF, VLF, VLF-AGC, HF, and HF-AGC channels
+   	*Data location:				  <CAPER data dir>/calibration_data/digitizer_cal/070{1,8}2014/
+	*Data type:				  Raw binary
+	*Sample size:				  2 bytes (or 1 word)
+	*Endianness:				  Big
+	*Headers:				  NO--see 'Filename structure' to understand what each file contains
+	*Multiple digitizer channels per file?	  YES
+	*All channels digitized at same rate? 	  YES
+	*Ordering of channels within file: 	  Always permutation of CH1, CH2, CH3, CH4, so might be, e.g., 
+	                                             CH3 CH4 CH1 CH2 | CH3 CH4 CH1 CH2 | <repeat>...
+	*Program used for acquisition: 		  acq_c
+	*Scripts/notes on acquisition:		  <CAPER data dir>/CAPER_daq_scripts_notes/summer_2014_cals/
+	*Filename structure:			  <Channel>--<sphere>--<Description_of_calibration_or_test>--<Number of channels>-<Sample rate>.data
+
+	*Other notes: 
+	       -->IMPORTANT! Note that the filename provides all information about the calibration in question.
+	       -->Three-channel acquisition never seemed to work correctly, so when recording only three meaningful channels, 
+	             acquisition would be set to acquire from all four channels and one was left blank.
+	       -->All information about file contents is necessarily in the FILENAME, because digitized data includes no header!!
+	       -->When recording four channels, it isn't possible to determine which channel is recorded first (could be 1, 2, 3, or 4), 
+	             but the sample ordering should always permute (e.g., you might have CH4 CH1 CH2 CH3 as the order. 
+		     You will never have CH3 CH2 CH4 CH1 since that order isn't a permutation of CH1 CH2 CH3 CH4.
+	       -->Shouldn't need to worry about endianness. If the data look strange, swap the endianness. All our programs 
+	             for recording/processing (tcp_player, rtd_player, prtd, cprtd) have the necessary capabilities.
+		     Just check program options using '-h' at the command line.
+
+	*Example for examining such data: od -t x2z -v '<Channel>--<sphere>--<type of cal data>--<sample rate>--<Number of channels>' | less
+	
+	*Example gnuplot command for ~127Hz wave from ELF-AHI-X1L cal file with two channels:
+		 #File of interest
+		 FILE='/data_uno/data/CAPER/calibration_data/digitizer_cal/07082014/ELF-AHI--sph_X1L--50-s_freqsweep_0-5kHz--4.8Vpp_input--0-20-40dB_null---2ch-20KHz.data'
+		 #Format for files containing two channels
+		 GNUP_FMT="%int16%int16" 
+		 GNUP_TITLE="ELF-ALO--X1L--4.8Vpp";
+		 SKIP=5500000 && \
+		 NUM_POINTS=2000
+		 gnuplot -e 'set terminal wxt' \
+		 -e "plot \
+		    '${FILE}' binary skip=${SKIP} format=\"${GNUP_FMT}\" using 1 every ::0:0:${NUM_POINTS}:0 \
+		       with lines title '${GNUP_TITLE}--response', \
+		    '${FILE}' binary skip=${SKIP} format=\"${GNUP_FMT}\" using 2 every ::0:0:${NUM_POINTS}:0 \
+		       with lines title '${GNUP_TITLE}--input'" -persist
+
+2. Summer 2014 RxDSP Data
+   	*Channels/instruments:			Master and slave RxDSP
+   	*Data location:				<CAPER data dir>/calibration_data/RxDSP
+	*Data type:				Raw binary, interleaved I/Q data (look up 'IQ data' or ask a group member if 
+  	                                           you're not familiar with this; in short, the output is 
+						   I (1 word) Q (1 word) I Q I Q...ad desiratum
+	      					
+	*Sample size:				2 bytes (or 1 word)
+	*Headers:				YES
+	*Header structure:			Always starts with 'Dartmouth College', but they contain other info too. 
+						   See 'Other notes' below.
+	*Program used for acquisition: 		fscc_acq (KNOWN TO HAVE ISSUES! See below!)
+	*Real-time spectrogram script:		Use /usr/src/complex_proc/rtd_script.sh. Open it to understand how to use it.
+	*Real-time waveform script:		Use /usr/src/complex_proc/gnuplot_
+	*Scripts/notes on acquisition:		None exists for the summer 2014 RxDSP calibration files.
+
+	*Other notes: 
+	       -->The exact header structure is burned onto a PROM aboard the RxDSPs. The source (assembly) code for the RxDSPs can be found in
+	       	     the git repository https://github.com/DartmouthSpacePhys/Inspiron_assembly.git
+	
+	*Example for examining data:  
+	     od -t x2z -v <CAPER data dir>/calibration_data/RxDSP/overnight_slave/transp_test_overnight_slave_06132014_106.data | less
+	*Example for plotting a chunk of data within gnuplot: 
+	     plot "< dd skip=32M count=500 bs=1w if=master_slave_freqsweep_50mVpp_100kHz-1MHz-20140713-034837-p00.data 2>/dev/null" binary format="%int16%int16" using 1 with lines
+	  -->The seemingly unnecessary use of dd above is the best way I've been able to find to get a chunk of a binary file on the fly
+
+3. Summer 2014 Calibration data at Wallops
+   a) Data recorded through the DEWETRONs:
+   i) TM1 (includes all SKIN, ELF, VF, VLF, VLF-AGC, and HF-AGC, but NOT HF itself, which is TM4)
+	*Brief description:  	   	    	Data recorded through DEWETRONs over TCP/IP. I had to write a special program just to deal 
+	                                          with the TCP/IP protocol. Worst of all, our data are two-byte words, BUT, the recorders at 
+						  Wallops are only ten bits wide! That means every channel has to be split into two separate streams. 
+						  The upper 10 bits and the lower 6 bits of two channels have to be combined in order to recover
+						  a single sample. If you want to know more about this because you don't trust what I'm doing, 
+						  visit /usr/src/Wallops_TCPIP/utils/tcp_utils.c. It was messy...
+
+   	*Data location:				<CAPER data dir>/Wallops/
+	*Data type:				Very perplexing.... 
+	      					     --->If the file suffix is not 'combinedchans.data', then you will have to use 
+						            /usr/src/rtd_fileplayer to strip the TCP headers post-recording.
+						     --->If the file suffix IS 'combinedchands.data', then the structure of the data should be 
+						            identical to the digitizer calibration data 
+						            described under Section 1, 'Summer 2014 Digitizer Data'.
+	      					
+	*Sample size:			        Not a straightforward question; read 'data type' above. Ultimately, once processed properly, 
+	                                             the samples are two bytes (one word) each.
+	*Headers:				YES, TCP/IP packet headers that have to be dealt with. The program tcp_player, which is used 
+	                                             for acquisition, will provide you a list of options.
+	*Header structure:			Hmmm...Look up DEWESoft documentation, or delve into tcp_player_helpers.c or tcp_utils.c, 
+	                                             which have packet header readers.
+						   --->NOTE! These TCP/IP headers outputted by the DEWETRONs are metadata and, 
+						         as far as the physics is concerned, are worthless. That's why tcp_player has an option to 
+							 simply discarding them.
+	*Program used for acquisition: 		tcp_player (BUT, just use 'Wallops_telnet_TM1.sh' to record TM1 data! It will handle tcp_player for you)
+	*Real-time spectrogram script:		sudo /usr/src/complex_proc/rtd_script.sh <NUM CHANS> "tcp"
+	*Real-time waveform script:		sudo /usr/src/complex_proc/gnuplot_rtd.sh <NUM CHANS> "tcp"
+	*Scripts/notes on acquisition:		Some exist; check out, for example, /data_uno/data/CAPER/Wallops/vibe/notes/sine_vibe.txt
+		       	  			   --->sine_vibe.txt gives examples for TM1, the RxDSPs, and HF data
+        *Example commands for acquisition and real-time display through DEWETRONS:
+		 	     #This is easy compared to the RxDSP example below
+			     #Just dry-fire /usr/src/Wallops_TCPIP/Wallops_telnet_TM1.sh to see how it works.
+			     #Here is one specific example, which starts acquisition of ELF-AHI and also starts a real-time display:
+			        /usr/src/Wallops_TCPIP/Wallops_telnet_TM1.sh ELF-AHI 3
+
+   ii) TM2 (Master RxDSP) and TM3 (Slave RxDSP)
+   	*Channels/instruments:			Master and slave RxDSP
+   	*Data location:				<CAPER data dir>/calibration_data/RxDSP
+	*Data type:				Raw binary, interleaved I/Q data (look up 'IQ data' or ask a group member if you're not 
+	                                           familiar with this; in short, the output is I (1 word) Q (1 word) I Q I Q...ad desiratum
+	*Sample size:				2 bytes (or 1 word)
+	*Headers:				YES
+	*Header structure:			Always starts with 'Dartmouth College'.
+	*Program used for acquisition: 		tcp_player; see below for more detail.
+	*Real-time spectrogram script:		Use /usr/src/complex_proc/rtd_script.sh. Open it to understand how to use it.
+	*Real-time waveform script:		Use /usr/src/complex_proc/gnuplot_
+	*Scripts/notes on acquisition:		None exists for the summer 2014 RxDSP calibration files.
+
+	*Example for examining such data:  od -t x2z -v <CAPER data dir>/calibration_data/RxDSP/overnight_slave/transp_test_overnight_slave_06132014_106.data | less
+	*Example commands for acquisition and real-time display through the DEWETRONs (USE THREE SEPARATE TERMINALS!): 
+			     #TERMINAL ONE: First, get tcp_player listening to the relevant ports
+                             sudo ./tcp_player -p 5005,5006 -c 1 -o "/Windows_compat_CAPER/" -P "CAPER_RxDSP" -m /tmp/rtd/rtd_tcpl.data -d 1 -a 6 -r 2 
+
+			     #TERMINAL TWO: Now tell the DEWETRONs to fire that data over! Delve into the shell script if you want to know more.
+			     ./Wallops_telnet_RxDSP.sh 2 master 10000
+
+			     #TERMINAL THREE: NOW, from the directory /usr/src/complex_proc/ run another script:
+			     sudo ./rtd_script.sh 1 tcpl
+
+   b) HF (sometimes referred to as baseband)
+      *Data type:				  Raw binary
+      *Sample size:				  2 bytes (or 1 word)
+      *Headers:				      	  NO--see 'Filename structure' to understand what each file contains
+      *Multiple digitizer channels per file?	  NO; digitizing at wallops only ever consisted of a single (HF) channel
+      *All channels digitized at same rate? 	  Not applicable; digitizing at wallops only ever consisted of a single (HF) channel
+      *Ordering of channels within file: 	  Always permutation of CH1, CH2, CH3, CH4, so might be, e.g., 
+                                                   CH3 CH4 CH1 CH2 | CH3 CH4 CH1 CH2 | <repeat>...
+      *Program used for acquisition: 		  acq_c (not alone, but rather often using a script! see next item)
+      *Scripts/notes on acquisition:		  <CAPER data dir>/CAPER_daq_scripts_notes/Wallops_cals_tests/
+      *Filename structure:			  I wasn't as diligent at Wallops about giving these files helpful names. Nonetheless, they
+      		 				     might be something like the following:
+						     <Channel>--<sphere>--<Description_of_calibration_or_test>--<Number of channels>-<Sample rate>.data
+						     Your best bet is to look at the scripts and notes mentioned above.
+      *Other notes:				  At Wallops, HF was recorded in an analog format. When we went to Andøya, the Wallops folks switched to 
+      	     					     digitizing HF at 40 MS/s.
+4. Data recorded in Norway. 
+      *Key note:			       All channels were recorded in a manner identical to that used for the Wallops visits in the summer, 
+                                                  with the sole exception of the DUAL-A and DUAL-B tests, which were recorded by Wideband systems 
+						  and are in .ch10 format. 
+					       These require a special library to deal with... We have not yet analyzed these files so I'm not 
+					          about to summarize the IRIG-106 Chapter 10 data format, which is leviathan. However, feel free to 
+						  poke around /usr/src/IRIGCh_10_utils to get a feel, if you like.
+					       I wrote a special program, idmpanalog, which you will find in the IRIGCh_10_utils directory. You can 
+					          use it (only) to yank raw analog data out of chapter 10 files, which encompass a huge number of data types.
+					       *Check out my contribution to the irig open-source software library at irig106.org! I only 
+					          wrote the analog components of the library and utilities.
+      *Data size:                              8-bit (we're limited to this by the Wideband recorders)
+      *Endianness:			       Little
+      *Data location:			       <CAPER data dir>/Andoya/cals/HF_TM4/   
+      *Only three pertinent files:	       16-DualAX1LH.ch10, 17-DualBX1LH.ch10, 17-DualB_take2.ch10
+      *To view file contents w/ gnuplot:       1. Strip analog data out of ch.10 file using idmpanalog in /usr/src/IRIGCh10_utils/i106_utils/
+      	  				       2. Look at /usr/src/prtd/gnuplot_rtd.sh to get an idea, or do something like this:
+					       	  gnuplot
+						  file="/usr/src/IRIGCh_10_utils/irig106utils/gcc/16DUALA-TM4Comb4--Analog_Subchan0.dmpanalog"
+						  plot '[file]' binary endian=little skip=[whatever] format="%int8" \
+						       using 1 every ::[offset]:0:[offset+numpoints]:0 with lines title "My Channel"
