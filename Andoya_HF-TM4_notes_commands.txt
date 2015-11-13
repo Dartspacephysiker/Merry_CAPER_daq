@@ -1,0 +1,29 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+HF STUFF @ Andøya--NOV 08 2014, Fri 7:09pm
+Tests:
+14-HI-TM4-Z1
+15-HI-TM4-Z2
+Digitization @ 20MHz
+100kHz-10MHz, log sweep for 90 seconds x 5
+============================
+---Freq
+#sudo ./Andoya_cal_script.sh 14-HI-TM4-Z1 65536 20000000 1
+#sudo ./Andoya_cal_script.sh 15-HI-TM4-Z2 65536 20000000 1
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+HF STUFF @ Andøya--NOV 09 2014, Sat 7:08pm
+Tests:
+14-HI-TM4-Z1--redo
+15-HI-TM4-Z2--redo
+Digitization @ 20MHz
+100kHz-10MHz, log sweep for 90 seconds x 5
+
+#Stuff got messed up at the TM trailer and David and Jim have been working there all day.
+#The result of the mess-up is that we have to redo the HF calibration runs.
+#Parameters are the same with the exception of the sweep length, which is now 60 seconds
+============================
+
+---Freq
+#sudo ./Andoya_cal_script.sh 14-HI-TM4-Z1--redo-11082014 65536 20000000 1
+#sudo ./Andoya_cal_script.sh 15-HI-TM4-Z2--redo-11082014 65536 20000000 1

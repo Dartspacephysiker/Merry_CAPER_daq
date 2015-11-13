@@ -1,0 +1,310 @@
+20150629
+For VLF cals, we have the following situation:
+==============================================
+CH 1: Input signal,  which tees off to the o-scope; this then tees off to the stack
+CH 2: VLF{A,B}-AGC
+CH 3: VLF{A,B}
+CH 4: Nada
+
+NOTE: Terminate David's test dongle (the one that has VLFA and VLFB coming straight out of the stack)
+===== with 3Kohms before inputting to digitizer card
+
+Amplitude cal: Do steps of 3 dB, perhaps starting with 1 Vrms, and drop at least 10 dB below zero AGC,
+============== and at least a few DB above pinned AGC
+	       Frightful effectiveness: AGC leaves VLF signal clean at 100 dB!
+	       -->Need to add a second attenuator
+	       ....-->No, there's a ground loop issue somewhere	        
+
+3, 6, 10dB,
+13, 16, 20dB, etc
+
+Freq. cal: Digitize VLF, VLF-AGC, and input signal simultaneously, attenuated 20 dB for freq sweeps
+==========
+
+
+20150619
+Spencer Hatch
+
+=======For ELF,SKIN,VF calibrations
+CH 1: Input signal,  which tees off to the o-scope; this then tees off to the stack
+CH 2: {{ELF,VF}{A,B}{HI,LO},SKIN{HI,LO}}
+CH 3: blank
+CH 4: blank
+ 
+-->Using HP3324A sig gen, since David has calibrated that more recently
+
+David says these were the frequencies he used to calibrate the gain
+Chan    Freq
+====    ====     
+ELF  -  10    Hz
+VF   -  140   Hz
+VLF  -  ~1.2 kHz*
+
+*note: sqrt(13000*100) ~= 1200 -->Geometric mean of lower and upper frequency of window
+
+Chan    Gain(w/clipper)     DB          rounded DB**  Gain(w/o clipper)
+====    ===============     ==          ==========    =================
+	               				                     
+SKINLO  0.2               -13.9797      -14	      0.25            
+SKINHI  0.8                -1.9382      -2	      1.0           
+ELFLO   0.8                -1.9382      -2	      1.0            
+ELFHI   4.0                12.0412       12	      5.0            
+VFLO    3.2                10.1030       10	      4.0            
+VFHI    32                 30.1030       30	      40            
+
+**This is the attenuation set on the KAY Elemetrics 837 attenuator
+
+#######
+#<X1L>#
+#######
+For these acquisitions,
+CH 1: Interconnect output
+CH 2: Input signal
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+I.VLF CHANNELS
+ ---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh VLFA--VLFA-AGC--sph_X1L--80-s_freqsweep_0-80kHz--1Vrms_input--28-48-68dB_null 8192 320000 4
+#sudo ./spence_rtd_acq_for_cal.sh VLFA-AGC--sph_X1L--80-s_freqsweep_0-80kHz--1Vrms_input--28-48-68dB_null 8192 320000 4
+---Amp
+#sudo ./spence_rtd_acq_for_cal.sh VLFA--VLFA-AGC--sph_X1L--10dB_delta-amplsweep_0-100dB_1Vrms--1.2kHz_input 8192 320000 4
+#sudo ./spence_rtd_acq_for_cal.sh VLFA-AGC--sph_X1L--10dB_delta-amplsweep_0-100dB_1Vrms--1.2kHz_input 8192 320000 4
+
+II.A ELF CHANNELS
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-ALO--sph_X1L--20-s_freqsweep_0-2kHz--1.25Vrms_input--0_20_40dB_null 256 5000
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-ALO--sph_X1L--10dB_delta-amplsweep_0-100dB_1.25Vrms--10Hz_input 256 5000
+
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-AHI--sph_X1L--20-s_freqsweep_0-2kHz--1Vrms_input--12_32_52dB_null 256 5000
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-AHI--sph_X1L--10dB_delta-amplsweep_2-92dB_1Vrms--10Hz_input 256 5000
+
+II.B VF CHANNELS
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh VF-ALO--sph_X1L--80-s_freqsweep_0-16kHz--1Vrms_input--10_30_50dB_null 512 32000
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh VF-ALO--sph_X1L--10dB_delta-amplsweep_10-100dB_1Vrms--140Hz_input 512 32000
+
+---Freq
+! #sudo ./spence_rtd_acq_for_cal.sh VF-AHI--sph_X1L--80-s_freqsweep_0-16kHz--1Vrms_input--30_50_70dB_null 512 32000
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh VF-AHI--sph_X1L--10dB_delta-amplsweep_20-100dB_1Vrms--140Hz_input 512 32000
+
+III. SKIN CHANNELS
+---Freq tests
+!#sudo ./spence_rtd_acq_for_cal.sh SKINLO--sph_X1L--20-s_freqsweep_0-2kHz--10Vpp_input--0_20_40dB_null 256 5000
+---Ampl
+!#sudo ./spence_rtd_acq_for_cal.sh SKINLO--sph_X1L--10dB_delta-amplsweep_0-100dB_10Vpp--10Hz_input 256 5000
+
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh SKINHI--sph_X1L--20-s_freqsweep_0-2kHz--1.25Vrms_input--0_20_40dB_null 256 5000
+---Ampl
+!#sudo ./spence_rtd_acq_for_cal.sh SKINHI--sph_X1L--10dB_delta-amplsweep_0-100dB_1.25Vrms--10Hz 256 5000
+
+#######
+#<X2L>#
+#######
+For these acquisitions,
+CH 1: Interconnect output
+CH 2: Input signal
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+I.VLF CHANNELS
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh VLFA--VLFA-AGC--sph_X2L--80-s_freqsweep_0-80kHz--1Vrms_input--28-48-68dB_null 8192 320000 4
+#sudo ./spence_rtd_acq_for_cal.sh VLFA-AGC--sph_X2L--80-s_freqsweep_0-80kHz--1Vrms_input--28-48-68dB_null 8192 320000 4
+---Amp
+#sudo ./spence_rtd_acq_for_cal.sh VLFA--VLFA-AGC--sph_X2L--10dB_delta-amplsweep_0-100dB_1Vrms--1.2kHz_input 8192 320000 4
+#sudo ./spence_rtd_acq_for_cal.sh VLFA-AGC--sph_X2L--10dB_delta-amplsweep_0-100dB_1Vrms--1.2kHz_input 8192 320000 4
+
+II.A ELF CHANNELS
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-ALO--sph_X2L--20-s_freqsweep_0-2kHz--1.25Vrms_input--0_20_40dB_null 256 5000
+---Ampl
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-ALO--sph_X2L--10dB_delta-amplsweep_0-100dB_1.25Vrms--10Hz_input 256 5000
+
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-AHI--sph_X2L--20-s_freqsweep_0-2kHz--1Vrms_input--12dB_32dB_52dB_null 256 5000
+---Ampl
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-AHI--sph_X2L--10dB_delta-amplsweep_2-92dB_1Vrms--10Hz_input 256 5000
+
+II.B VF CHANNELS
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh VF-ALO--sph_X2L--80-s_freqsweep_0-16kHz--1Vrms_input--10_30_50dB_null 512 32000
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh VF-ALO--sph_X2L--10dB_delta-amplsweep_10-100dB_1Vrms--140Hz_input 512 32000
+
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh VF-AHI--sph_X2L--80-s_freqsweep_0-16kHz--1Vrms_input--30_50_70dB_null 512 32000
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh VF-AHI--sph_X2L--10dB_delta-amplsweep_20-100dB_1Vrms--140Hz_input 512 32000
+
+######
+#<Y1>#
+######
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+I.VLF CHANNELS (Being recorded as specified in 20150629 note at top)
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh VLFB--VLFB-AGC--sph_Y1--80-s_freqsweep_0-80kHz--1Vrms_input--28-48-68dB_null 8192 320000 4
+---Amp
+#sudo ./spence_rtd_acq_for_cal.sh VLFB--VLFB-AGC--sph_Y1--10dB_delta-amplsweep_0-100dB_1Vrms--1.2kHz_input 8192 320000 4
+
+II.A ELF CHANNELS
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-BLO--sph_Y1--20-s_freqsweep_0-2kHz--1.25Vrms_input--0_20_40dB_null 256 5000
+
+---Ampl
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-BLO--sph_Y1--10dB_delta-amplsweep_0-100dB_1.25Vrms--10Hz_input 256 5000
+
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-BHI--sph_Y1--20-s_freqsweep_0-2kHz--1Vrms_input--12_32_52dB_null 256 5000
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-BHI--sph_Y1--10dB_delta-amplsweep_2-92dB_1Vrms--10Hz_input 256 5000
+
+II.B VF CHANNELS
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh VF-BLO--sph_Y1--80-s_freqsweep_0-16kHz--1Vrms_input--10_30_50dB_null 512 32000
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh VF-BLO--sph_Y1--10dB_delta-amplsweep_10-100dB_1Vrms--140Hz_input 512 32000
+
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh VF-BHI--sph_Y1--80-s_freqsweep_0-16kHz--1Vrms_input--30_50_70dB_null 512 32000
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh VF-BHI--sph_Y1--10dB_delta-amplsweep_20-100dB_1Vrms--140Hz_input 512 32000
+
+######
+#<Y2>#
+######
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+I.VLF CHANNELS
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh VLFB--VLFB-AGC--sph_Y2--80-s_freqsweep_0-80kHz--1Vrms_input--28-48-68dB_null 8192 320000 4
+---Amp
+#sudo ./spence_rtd_acq_for_cal.sh VLFB--VLFB-AGC--sph_Y2--10dB_delta-amplsweep_0-100dB_1Vrms--1.2kHz_input 8192 320000 4
+
+II.A ELF CHANNELS
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-BLO--sph_Y2--20-s_freqsweep_0-2kHz--1.25Vrms_input--0-20_40dB_null 256 5000
+---Ampl
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-BLO--sph_Y2--10dB_delta-amplsweep_0-100dB_1.25Vrms--10Hz_input 256 5000
+
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-BHI--sph_Y2--20-s_freqsweep_0-2kHz--1Vrms_input--12_32_52dB_null 256 5000
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-BHI--sph_Y2--10dB_delta-amplsweep_2-92dB_1Vrms--10Hz_input 256 5000
+
+II.B VF CHANNELS
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh VF-BLO--sph_Y2--80-s_freqsweep_0-16kHz--1Vrms_input--10_30_50dB_null 512 32000
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh VF-BLO--sph_Y2--10dB_delta-amplsweep_10-100dB_1Vrms--140Hz_input 512 32000
+
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh VF-BHI--sph_Y2--80-s_freqsweep_0-16kHz--1Vrms_input--30_50_70dB_null 512 32000
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh VF-BHI--sph_Y2--10dB_delta-amplsweep_20-100dB_1Vrms--140Hz_input 512 32000
+
+#######
+#<X1H>#
+#######
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+V. DX1H CHANNELS
+---Freq tests
+#sudo ./spence_rtd_acq_for_cal.sh DX1H-ALO--sph_X1H--1000-s_freqsweep_0-10MHz--1Vrms_input--0dB_null 8192 20000000
+#sudo ./spence_rtd_acq_for_cal.sh DX1H-ALO--sph_X1H--1000-s_freqsweep_0-10MHz--1Vrms_input_20dB_null 8192 20000000
+#sudo ./spence_rtd_acq_for_cal.sh DX1H-ALO--sph_X1H--1000-s_freqsweep_0-10MHz--1Vrms_input_40dB_null 8192 20000000
+
+######
+#<Z1>#
+######
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+IV. HF CHANNEL
+---Freq
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1_Z2--500-s_freqsweep_0-5MHz--0.2Vpp_input--0dB 65536 10000000 4
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1_Z2--500-s_freqsweep_0-5MHz--0.2Vpp_input--20dB 65536 10000000 4
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1_Z2--500-s_freqsweep_0-5MHz--0.2Vpp_input--40dB 65536 10000000 4
+---Amp
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1_Z2--10dB_delta-amplsweep_0-100dB_0.2Vpp_null--1MHz_input 65536 10000000 4
+
+---Freq
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1_X1H--500-s_freqsweep_0-5MHz--0.6Vpp_input--0dB_null 65536 10000000
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1_X1H--500-s_freqsweep_0-5MHz--0.6Vpp_input--20dB_null 65536 10000000
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1_X1H--500-s_freqsweep_0-5MHz--0.6Vpp_input--40dB_null 65536 10000000
+---Amp
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1_X1H--10dB_delta-amplsweep_0-100dB_0.6Vpp--1MHz_input 65536 10000000
+
+---Freq
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_X1H_Z1--500-s_freqsweep_0-5MHz--0.6Vpp_input--0dB_null 65536 10000000
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_X1H_Z1--500-s_freqsweep_0-5MHz--0.6Vpp_input--20dB_null 65536 10000000
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_X1H_Z1--500-s_freqsweep_0-5MHz--0.6Vpp_input--40dB_null 65536 10000000
+---Amp
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_X1H_Z1--10dB_delta-amplsweep_0-100dB_0.6Vpp--1MHz_input 65536 10000000
+
+---Freq
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1_X2H--500-s_freqsweep_0-5MHz--0.2Vpp_input--0dB_null 65536 10000000
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1_X2H--500-s_freqsweep_0-5MHz--0.2Vpp_input--20dB_null 65536 10000000
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1_X2H--500-s_freqsweep_0-5MHz--0.2Vpp_input--40dB_null 65536 10000000
+---Amp
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1_X2H--10dB_delta-amplsweep_0-100dB_0.2Vpp--1MHz_input 65536 10000000
+
+---Freq
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_X2H_Z1--500-s_freqsweep_0-5MHz--0.2Vpp_input--0dB_null 65536 10000000
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_X2H_Z1--500-s_freqsweep_0-5MHz--0.2Vpp_input--20dB_null 65536 10000000
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_X2H_Z1--500-s_freqsweep_0-5MHz--0.2Vpp_input--40dB_null 65536 10000000
+---Amp
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_X2H_Z1--10dB_delta-amplsweep_0-100dB_0.2Vpp--1MHz_input 65536 10000000
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+IV. HF CHANNEL
+---Freq
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1--500-s_freqsweep_0-5MHz--1Vrms_input--0dB 65536 10000000 4
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1--500-s_freqsweep_0-5MHz--1Vrms_input--20dB_null 65536 10000000 4
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1--500-s_freqsweep_0-5MHz--1Vrms_input--40dB_null 65536 10000000 4
+---Amp
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1--10dB_delta-amplsweep_0-100dB_1Vrms--1MHz_input 65536 10000000 4
+
+######
+#<Z2>#
+######
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+NEW HF STUFF--07082014
+======================
+The Z2 HF calibrations all go with sphere Z1. The situation with Z1 is more complicated; see above.
+For these acquisitions,
+CH 1: Input signal
+CH 2: TM output (w/ 50-ohm terminator)
+CH 3: blank
+CH 4: HF AGC
+The foregoing arrangement of channels represents an attempt to lower the interference of the input and TM output
+with the HF AGC
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+IV. HF CHANNEL
+---Freq
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z2--500-s_freqsweep_0-5MHz--0.2Vpp_input--0dB_null 65536 10000000 4
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z2--500-s_freqsweep_0-5MHz--0.2Vpp_input--20dB_null 65536 10000000 4
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z2--500-s_freqsweep_0-5MHz--0.2Vpp_input--40dB_null 65536 10000000 4
+---Amp
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z2--10dB_delta-amplsweep_0-100dB_0.2Vpp--1MHz_input 65536 10000000 4
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+(OLD HF STUFF--probably garbage as terminator was on wrong, i.e., AGC channel)
+For these acquisitions,
+CH 1: HF AGC (w/ 50-ohm terminator)
+CH 2: Input signal
+CH 3: TM output
+CH 4: blank
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+IV. HF CHANNEL
+---Freq
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z2--500-s_freqsweep_0-5MHz--1Vrms_input--0dB 65536 10000000 4
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z2--500-s_freqsweep_0-5MHz--1Vrms_input--20dB_null 65536 10000000 4
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z2--500-s_freqsweep_0-5MHz--1Vrms_input--40dB_null 65536 10000000 4
+---Amp
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z2--10dB_delta-amplsweep_0-100dB_1Vrms--1MHz_input 65536 10000000 4
+
+#######################
+##OFFSET MEASUREMENTS##
+#######################
+07/03/2014
+==>Per Professor LaBelle's instruction, I should record the null of each channel
+==>See the table on the Google Doc

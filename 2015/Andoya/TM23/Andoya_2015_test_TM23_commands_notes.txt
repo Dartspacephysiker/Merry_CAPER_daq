@@ -1,0 +1,26 @@
+###########
+#2015/11/10
+
+#Get to the directory
+cd /usr/src/Wallops_TCPIP
+
+#To connect to the ALTAIR for 400 sec, do this
+sudo ./Wallops_telnet_RxDSP__single_ALTAIR.sh 3 400 0 5003
+
+#To run TM2/3 acquisition, do the following
+#NOTE:
+#--> -r 3 means a data file and a tstamp file are created for each channel, but only timestamps corresponding to 'aDtromtu ...' are saved
+#--> -c 2 means there are two channels, TM2 and TM3, on this port
+#--> -d 1 means the RTD output period is 1 second
+#--> -a 6 means that 6 RTD blocks are averaged before outputting
+sudo ./tcp_player_highspeed -o /home/spencerh/data/CAPER/Andoya/2015/cals/TM23/20151011_TM23_test -p 5003 -c 2 -r 3 -d 1 -m /tmp/rtd/rtd_tcp1.data -a 6
+
+#To start visualization, do this
+cd /usr/src/complex_proc/
+sudo ./rtd_script.sh 0 tcp1
+
+
+###########
+#2015/11/12
+#Doing some check or other on TM2/3. Changed prefix:
+sudo ./tcp_player_highspeed -o /home/spencerh/data/CAPER/Andoya/2015/cals/TM23/20151012_TM23_sanity_check_DELETEME -P final_sanity_check-- -p 5003 -c 2 -r 3 -d 1 -m /tmp/rtd/rtd_tcp1.data -a 6

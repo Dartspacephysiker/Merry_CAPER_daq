@@ -1,0 +1,8 @@
+#We currently have 568G free
+#The following could free up 509G, leaving us with ~1.1T free
+
+#Drop 394G ...
+#mv /home/spencerh/data/CAPER/Wallops/2014 ${BKUPDRIVEDIR}/Wallops/2014
+
+#Drop 115G
+#mv /home/spencerh/data/CAPER/Andoya/2014 ${BKUPDRIVEDIR}/Andoya/2014

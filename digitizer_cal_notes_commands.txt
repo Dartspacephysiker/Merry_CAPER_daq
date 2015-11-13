@@ -1,0 +1,393 @@
+07082014
+Today is now HF day. Acquisition channels are set up DIFFERENTLY relative to the first time I did HF (see entry under
+HF below).
+07072014
+Turns out there were some issues with the Y booms (preamp was wired backwards?) and I accidentally did all of the
+cals at way too high a voltage (should have been closer to ~800mVpp, but I was doing ~2.4Vpp on the signal generator),
+so I've got to re-do the 0dB cals at what we really want to be 0dB as well as redo all Y boom stuff.
+
+I also have to redo all HF stuff on account of some wacky problem that David is fixing, but that won't happen today.
+
+For the tests today, the setup is identical to what it has been for previous calibrations:
+=======For VLF calibrations
+CH 1: VLF{A,B} AGC
+CH 2: Input signal
+CH 3: VLF{A,B} output from Dave's dongle
+CH 4: blank
+
+=======For any other low-freq channel (ELF, SKIN, VF)
+CH 1: Interconnect output ("LF SIG OUT")
+CH 2: Input signal
+
+06302014
+Spencer Hatch
+These are the commands I used to perform calibration:
+
+#######
+#<X1L>#
+#######
+For these acquisitions,
+CH 1: Interconnect output
+CH 2: Input signal
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+I.VLF CHANNELS
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh VLFA--sph_X1L--250-s_freqsweep_0-250kHz--0.8Vpp_input--0-20-40dB_null 8192 500000 4
+###sudo ./spence_rtd_acq_for_cal.sh VLFA-AGC--sph_X1L--250-s_freqsweep_0-250kHz--0.8Vpp_input--0-20-40dB_null 8192 500000 4
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh VLFA--sph_X1L--10dB_delta-amplsweep_0-100dB_0.8Vpp--10kHz_input 8192 500000 4
+###sudo ./spence_rtd_acq_for_cal.sh VLFA-AGC--sph_X1L--10dB_delta-amplsweep_0-100dB_0.8Vpp--10kHz_input 8192 500000 4
+
+
+II.A ELF CHANNELS
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-ALO--sph_X1L--50-s_freqsweep_0-5kHz--0.8Vpp_input--0dB_null 256 20000
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-ALO--sph_X1L--50-s_freqsweep_0-5kHz--4.8Vpp_input--0-20-40dB_null 256 20000
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-ALO--sph_X1L--10dB_delta-amplsweep_0-100dB_4.8Vpp--50Hz_input 256 20000
+
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-AHI--sph_X1L--50-s_freqsweep_0-5kHz--0.8Vpp_input--0dB_null 256 20000
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-AHI--sph_X1L--50-s_freqsweep_0-5kHz--4.8Vpp_input--0-20-40dB_null 256 20000
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-AHI--sph_X1L--10dB_delta-amplsweep_0-100dB_4.8Vpp--50Hz_input 256 20000
+
+II.B VF CHANNELS
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh VF-ALO--sph_X1L--250-s_freqsweep_0-25kHz--0.8Vpp_input--0dB_null 512 50000
+==>Again, A-HA! Signal breaks through at about 20 kHz
+==>A little long (I was in the bathroom), but null measurement at end
+!#sudo ./spence_rtd_acq_for_cal.sh VF-ALO--sph_X1L--250-s_freqsweep_0-25kHz--4.8Vpp_input--0-20-40dB_null 512 50000
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh VF-ALO--sph_X1L--10dB_delta-amplsweep_0-100dB_4.8Vpp--1kHz_input 512 50000
+
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh VF-AHI--sph_X1L--250-s_freqsweep_0-25kHz--0.8Vpp_input--0dB_null 512 50000
+!#sudo ./spence_rtd_acq_for_cal.sh VF-AHI--sph_X1L--250-s_freqsweep_0-25kHz--4.8Vpp_input--0-20-40dB_null 512 50000
+==>I accidentally left it running after the 40dB run, so the null measurement is at the very, very end (about 2 seconds long)
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh VF-AHI--sph_X1L--10dB_delta-amplsweep_0-100dB_4.8Vpp--1kHz_input 512 50000
+
+III. SKIN CHANNELS
+---Freq tests
+!#sudo ./spence_rtd_acq_for_cal.sh SKINLO--sph_X1L--50-s_freqsweep_0-5kHz--0.8Vpp_input--0dB_null 256 20000
+==>No discernible response??
+!#sudo ./spence_rtd_acq_for_cal.sh SKINLO--sph_X1L--50-s_freqsweep_0-5kHz--4.8Vpp_input--0-20-40dB_null 256 20000
+---Ampl
+!#sudo ./spence_rtd_acq_for_cal.sh SKINLO--sph_X1L--10dB_delta-amplsweep_0-100dB_4.8Vpp--50Hz_input 256 20000
+
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh SKINHI--sph_X1L--50-s_freqsweep_0-5kHz--0.8Vpp_input--0dB_null 256 20000
+==>No discernible response??
+!#sudo ./spence_rtd_acq_for_cal.sh SKINHI--sph_X1L--50-s_freqsweep_0-5kHz--4.8Vpp_input--0-20-40dB_null 256 20000
+---Ampl
+!#sudo ./spence_rtd_acq_for_cal.sh SKINHI--sph_X1L--10dB_delta-amplsweep_0-100dB_4.8Vpp--50Hz 256 20000
+==>No null, forgot...
+
+#######
+#<X2L>#
+#######
+For these acquisitions,
+CH 1: Interconnect output
+CH 2: Input signal
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+I.VLF CHANNELS
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh VLFA--sph_X2L--250-s_freqsweep_0-250kHz--0.8Vpp_input--0-20-40dB_null 8192 500000 4
+==>Harmonic present, as per usual, in both 0dB and 20dB sweep
+###sudo ./spence_rtd_acq_for_cal.sh VLFA-AGC--sph_X2L--250-s_freqsweep_0-250kHz--0.8Vpp_input--0-20-40dB_null 8192 500000 4
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh VLFA--sph_X2L--10dB_delta-amplsweep_0-100dB_0.8Vpp--10kHz_input 8192 500000 4
+###sudo ./spence_rtd_acq_for_cal.sh VLFA-AGC--sph_X2L--10dB_delta-amplsweep_0-100dB_0.8Vpp--10kHz_input 8192 500000 4
+
+
+II.A ELF CHANNELS
+---Freq
+#sudo ./spence_rtd_acq_for_cal.sh ELF-ALO--sph_X2L--50-s_freqsweep_0-5kHz--0.8Vpp_input--dB_null 256 20000
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-ALO--sph_X2L--50-s_freqsweep_0-5kHz--4.8Vpp_input--0-20-40dB_null 256 20000
+---Ampl
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-ALO--sph_X2L--10dB_delta-amplsweep_0-100dB_4.8Vpp--50Hz_input 256 20000
+==>Accidental 0dB signal input at the very end, just following null
+
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-AHI--sph_X2L--50-s_freqsweep_0-5kHz--0.8Vpp_input--0dB_null 256 20000
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-AHI--sph_X2L--50-s_freqsweep_0-5kHz--4.8Vpp_input--0-20-40dB_null 256 20000
+---Ampl
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-AHI--sph_X2L--10dB_delta-amplsweep_0-100dB_4.8Vpp--50Hz_input 256 20000
+
+II.B VF CHANNELS
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh VF-ALO--sph_X2L--250-s_freqsweep_0-25kHz--0.8Vpp_input--0dB_null 512 50000
+==>Signal busts through @ 20kHz
+!#sudo ./spence_rtd_acq_for_cal.sh VF-ALO--sph_X2L--250-s_freqsweep_0-25kHz--4.8Vpp_input--0-20-40dB_null 512 50000
+==>Signal breaks through around 10kHz @ 0dB
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh VF-ALO--sph_X2L--10dB_delta-amplsweep_0-100dB_4.8Vpp--50Hz_input 512 50000
+
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh VF-AHI--sph_X2L--250-s_freqsweep_0-25kHz--0.8Vpp_input--0dB_null 512 50000
+==>Yep yep--breaks through @ 20kHz
+!#sudo ./spence_rtd_acq_for_cal.sh VF-AHI--sph_X2L--250-s_freqsweep_0-25kHz--4.8Vpp_input--0-20-40dB_null 512 50000
+==>Also wusses out around 10kHz @ 0dB
+
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh VF-AHI--sph_X2L--10dB_delta-amplsweep_0-100dB_4.8Vpp--50Hz_input 512 50000
+
+
+######
+#<Y1>#
+######
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+I.VLF CHANNELS (Being recorded as specified in 07072014 note at top)
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh VLFB--sph_Y1--250-s_freqsweep_0-250kHz--0.9Vpp_input--0-20-40dB_null 8192 500000 4
+==>It looks like this channel can support big input signals. I have 2.4Vpp on the sig. gen., and the Vpp on the 
+==>interconnect output is 10.4Vpp on the o-scope for VLFB, with the AGC sitting at 5V. No deformation...
+###sudo ./spence_rtd_acq_for_cal.sh VLFB-AGC--sph_Y1--250-s_freqsweep_0-250kHz--0.9Vpp_input--0-20-40dB_null 8192 500000 4
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh VLFB--sph_Y1--10dB_delta-amplsweep_0-100dB_0.9Vpp--10kHz_input 8192 500000 4
+###sudo ./spence_rtd_acq_for_cal.sh VLFB-AGC--sph_Y1--10dB_delta-amplsweep_0-100dB_0.9Vpp--10kHz_input 8192 500000 4
+
+II.A ELF CHANNELS
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-BLO--sph_Y1--50-s_freqsweep_0-5kHz--0.9Vpp_input--0-20-40dB_null 256 20000
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-BLO--sph_Y1--50-s_freqsweep_0-5kHz--4.8Vpp_input--0-20-40dB_null 256 20000
+==>Some weirdo voltages going on
+==>It appears that when I have nothing plugged in, the voltages are all at good levels. However, the voltage sits around -7V
+==>for ELF-BLO when I plug in the Y booms. Suggestive of a preamp failure?
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-BHI--sph_Y1--50-s_freqsweep_0-5kHz--0.9Vpp_input--0-20-40dB_null 256 20000
+
+---Ampl
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-BLO--sph_Y1--10dB_delta-amplsweep_0-100dB_0.9Vpp--50Hz_input 256 20000
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-BHI--sph_Y1--10dB_delta-amplsweep_0-100dB_0.7Vpp--50Hz_input 256 20000
+==>Looks like signal is clipping asymmetrically on Y boom with input of 50Hz, 0.9Vpp; translates to signal that is
+==> nearly 20Vpp!
+
+II.B VF CHANNELS
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh VF-BLO--sph_Y1--250-s_freqsweep_0-25kHz--0.9Vpp_input--0dB_20dB_40dB_null 512 50000
+==>A-HA! Now I'm running with 0.9Vpp, and the signal STILL reappeared on the RTD around 18 kHz! It persisted throughout
+==> the rest of the sweep, up to 25 kHz.
+!#sudo ./spence_rtd_acq_for_cal.sh VF-BLO--sph_Y1--250-s_freqsweep_0-25kHz--4.8Vpp_input--0-20-40dB_null 512 50000
+==>Signal jumps back to life around 20kHz for 0dB segment, but absent in 20dB segment
+==>At least for this channel, it breaks through noticeably at an amplitude of 850mV and 19kHz, but is ABSENT for 850mV and 18kHz
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh VF-BLO--sph_Y1--10dB_delta-amplsweep_0-100dB_0.9Vpp--1kHz_input 512 50000
+!#sudo ./spence_rtd_acq_for_cal.sh VF-BLO--sph_Y1--10dB_delta-amplsweep_0-100dB_4.8Vpp--1kHz_input 512 50000
+
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh VF-BHI--sph_Y1--250-s_freqsweep_0-25kHz--0.9Vpp_input--0dB_20dB_40dB_null 512 50000
+==>0.9Vpp, and signal STILL breaking through on RTD around 18kHz, just as for VLF-BLO
+!#sudo ./spence_rtd_acq_for_cal.sh VF-BHI--sph_Y1--250-s_freqsweep_0-25kHz--4.8Vpp_input--0dB_null 512 50000
+==>Looks like signal "broke through", spreading all over the place starting with ~18kHz
+!#sudo ./spence_rtd_acq_for_cal.sh VF-BHI--sph_Y1--250-s_freqsweep_0-25kHz--4.8Vpp_input--20-40dB_null 512 50000
+==>Messed up, should redo! Started at 1Vpp @ 20dB, then 1Vpp @ 40dB, then null
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh VF-BHI--sph_Y1--10dB_delta-amplsweep_0-100dB_0.9Vpp--1kHz_input 512 50000
+!#sudo ./spence_rtd_acq_for_cal.sh VF-BHI--sph_Y1--10dB_delta-amplsweep_0-100dB_4.8Vpp--1kHz_input 512 50000
+
+
+######
+#<Y2>#
+######
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+I.VLF CHANNELS
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh VLFB--sph_Y2--250-s_freqsweep_0-250kHz--0.9Vpp_input--0-20-40dB_null 8192 500000 4
+==>Getting some ghostly little overtones
+###sudo ./spence_rtd_acq_for_cal.sh VLFB-AGC--sph_Y2--250-s_freqsweep_0-250kHz--0.9Vpp_input--0-20-40dB_null 8192 500000 4
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh VLFB--sph_Y2--10dB_delta-amplsweep_0-100dB_0.9Vpp--10kHz_input 8192 500000 4
+###sudo ./spence_rtd_acq_for_cal.sh VLFB-AGC--sph_Y2--10dB_delta-amplsweep_0-100dB_0.9Vpp--10kHz_input 8192 500000 4
+
+II.A ELF CHANNELS
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-BLO--sph_Y2--50-s_freqsweep_0-5kHz--0.9Vpp_input--0-20-40dB_null 256 20000
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-BHI--sph_Y2--50-s_freqsweep_0-5kHz--0.9Vpp_input--0-20-40dB_null 256 20000
+
+---Ampl
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-BLO--sph_Y2--10dB_delta-amplsweep_0-100dB_0.9Vpp--50Hz_input 256 20000
+!#sudo ./spence_rtd_acq_for_cal.sh ELF-BHI--sph_Y2--10dB_delta-amplsweep_0-100dB_0.9Vpp--50Hz_input 256 20000
+==>Just barely noticed that ELF-BHI is clipping on Y2 when 900mVpp
+
+II.B VF CHANNELS
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh VF-BLO--sph_Y2--250-s_freqsweep_0-25kHz--0.9Vpp_input--0-20-40dB_null 512 50000
+==>Signal filtered out after about 3.5kHz, but REAPPEARS at about 18kHz and persists thereafter for 0dB!
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh VF-BLO--sph_Y2--10dB_delta-amplsweep_0-100dB_0.9Vpp--1kHz_input 512 50000
+
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh VF-BHI--sph_Y2--250-s_freqsweep_0-25kHz--0.9Vpp_input--0-20-40dB_null 512 50000
+==>Same as VF-BLO and others: signal reappears at about 18kHz and persists thereafter
+==>Showed it to Dave on the o-scope, and he wasn't sure what it was... (Showed him 19kHz @855mVpp on VFBHI, Y2)
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh VF-BHI--sph_Y2--10dB_delta-amplsweep_0-100dB_0.9Vpp--1kHz_input 512 50000
+
+
+#######
+#<X1H>#
+#######
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+V. DX1H CHANNELS
+---Freq tests
+#sudo ./spence_rtd_acq_for_cal.sh DX1H-ALO--sph_X1H--1000-s_freqsweep_0-2MHz--0.9Vpp_input--0dB_null 8192 50000
+#sudo ./spence_rtd_acq_for_cal.sh DX1H-ALO--sph_X1H--1000-s_freqsweep_0-2MHz--0.9Vpp_input_20dB_null 8192 50000
+#sudo ./spence_rtd_acq_for_cal.sh DX1H-ALO--sph_X1H--1000-s_freqsweep_0-2MHz--0.9Vpp_input_40dB_null 8192 50000
+
+
+######
+#<Z1>#
+######
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+NEW HF STUFF--07082014
+======================
+***Note the inclusion of the sphere that Z1 is paired with in the file name
+***For the Z1/X2H cals, note that *_X2H was plugged into the X1H input on the stack_* per David's instruction,
+*** as X2H is acting as a "hot spare" on the flight!!
+*** The HF has significant gain, so going higher than about 200 mVpp is a waste of time
+For these acquisitions,
+CH 1: Input signal
+CH 2: TM output (w/ 50-ohm terminator)
+CH 3: blank
+CH 4: HF AGC
+The foregoing arrangement of channels represents an attempt to lower the interference of the input and TM output
+with the HF AGC
+
+07092014
+Note that the Z1/X1H tests only involve an input signal and the 50-ohm terminated X output on the Pre-HF board, 
+which is *NOT* the TM output. **Z1/X1H tests involve neither an AGC channel, nor the TM output. AGC is not relevant
+and is thefore not recorded, and instead of TM, the pre-HF X output is used so that the signal is merely amplified.**
+*FOR Z1/X1H:           *
+*CH 1: Input signal    *
+*CH 2: Pre-HF X output *
+*CH 3: blank           *
+*CH 4: blank           *
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+IV. HF CHANNEL
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1_Z2--500-s_freqsweep_0-5MHz--0.2Vpp_input--0dB 65536 10000000 4
+!#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1_Z2--500-s_freqsweep_0-5MHz--0.2Vpp_input--20dB 65536 10000000 4
+!#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1_Z2--500-s_freqsweep_0-5MHz--0.2Vpp_input--40dB 65536 10000000 4
+==>NOTE! I did not do a null measurement with any of these channels. There IS a null measurement present at the end of 
+==>the amplitude sweep.
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1_Z2--10dB_delta-amplsweep_0-100dB_0.2Vpp_null--1MHz_input 65536 10000000 4
+
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1_X1H--500-s_freqsweep_0-5MHz--0.6Vpp_input--0dB_null 65536 10000000
+==>Null at very, very end for a few seconds
+!#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1_X1H--500-s_freqsweep_0-5MHz--0.6Vpp_input--20dB_null 65536 10000000
+!#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1_X1H--500-s_freqsweep_0-5MHz--0.6Vpp_input--40dB_null 65536 10000000
+---Amp
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1_X1H--10dB_delta-amplsweep_0-100dB_0.6Vpp--1MHz_input 65536 10000000
+
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh HF--sph_X1H_Z1--500-s_freqsweep_0-5MHz--0.6Vpp_input--0dB_null 65536 10000000
+!#sudo ./spence_rtd_acq_for_cal.sh HF--sph_X1H_Z1--500-s_freqsweep_0-5MHz--0.6Vpp_input--20dB_null 65536 10000000
+!#sudo ./spence_rtd_acq_for_cal.sh HF--sph_X1H_Z1--500-s_freqsweep_0-5MHz--0.6Vpp_input--40dB_null 65536 10000000
+---Amp
+
+!#sudo ./spence_rtd_acq_for_cal.sh HF--sph_X1H_Z1--10dB_delta-amplsweep_0-100dB_0.6Vpp--1MHz_input 65536 10000000
+
+####################################################################################################
+THESE TESTS WERE NEVER DONE FOR LACK OF TIME
+---Freq
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1_X2H--500-s_freqsweep_0-5MHz--0.2Vpp_input--0dB_null 65536 10000000
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1_X2H--500-s_freqsweep_0-5MHz--0.2Vpp_input--20dB_null 65536 10000000
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1_X2H--500-s_freqsweep_0-5MHz--0.2Vpp_input--40dB_null 65536 10000000
+---Amp
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1_X2H--10dB_delta-amplsweep_0-100dB_0.2Vpp--1MHz_input 65536 10000000
+
+---Freq
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_X2H_Z1--500-s_freqsweep_0-5MHz--0.2Vpp_input--0dB_null 65536 10000000
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_X2H_Z1--500-s_freqsweep_0-5MHz--0.2Vpp_input--20dB_null 65536 10000000
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_X2H_Z1--500-s_freqsweep_0-5MHz--0.2Vpp_input--40dB_null 65536 10000000
+---Amp
+#sudo ./spence_rtd_acq_for_cal.sh HF--sph_X2H_Z1--10dB_delta-amplsweep_0-100dB_0.2Vpp--1MHz_input 65536 10000000
+####################################################################################################
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+(OLD HF STUFF--probably garbage as terminator could have been on wrong channel)
+=====================
+For these acquisitions,
+CH 1: HF AGC (w/ 50-ohm terminator)
+CH 2: Input signal
+CH 3: TM output
+CH 4: blank
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+IV. HF CHANNEL
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1--500-s_freqsweep_0-5MHz--4.8Vpp_input--0dB 65536 10000000 4
+==>Lots of harmonics present, or so it seems.
+==>Traces of signal even present in AGC channel
+==>No null!
+==>Did another run WITH null and, I believe, the proper polarity (there's a constant background signal present)
+!#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1--500-s_freqsweep_0-5MHz--4.8Vpp_input--20dB_null 65536 10000000 4
+!#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1--500-s_freqsweep_0-5MHz--4.8Vpp_input--40dB_null 65536 10000000 4
+==>Appearance of some strange signal @ ~3kHz when sweeping through 4-5kHz
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z1--10dB_delta-amplsweep_0-100dB_4.8Vpp--1MHz_input 65536 10000000 4
+
+
+######
+#<Z2>#
+######
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+NEW HF STUFF--07082014
+======================
+The Z2 HF calibrations all go with sphere Z1. The situation with Z1 is more complicated; see above.
+For these acquisitions,
+CH 1: Input signal
+CH 2: TM output (w/ 50-ohm terminator)
+CH 3: blank
+CH 4: HF AGC
+The foregoing arrangement of channels represents an attempt to lower the interference of the input and TM output
+with the HF AGC
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+IV. HF CHANNEL
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z2--500-s_freqsweep_0-5MHz--0.2Vpp_input--0dB_null 65536 10000000 4
+!#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z2--500-s_freqsweep_0-5MHz--0.2Vpp_input--20dB_null 65536 10000000 4
+!#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z2--500-s_freqsweep_0-5MHz--0.2Vpp_input--40dB_null 65536 10000000 4
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z2--10dB_delta-amplsweep_0-100dB_0.2Vpp--1MHz_input 65536 10000000 4
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+(OLD HF STUFF--probably garbage as terminator was on wrong, i.e., AGC channel)
+For these acquisitions,
+CH 1: HF AGC (w/ 50-ohm terminator)
+CH 2: Input signal
+CH 3: TM output
+CH 4: blank
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+IV. HF CHANNEL
+---Freq
+!#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z2--500-s_freqsweep_0-5MHz--4.8Vpp_input--0dB 65536 10000000 4
+==>Lots o' harmonics for 0db
+!#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z2--500-s_freqsweep_0-5MHz--4.8Vpp_input--20dB_null 65536 10000000 4
+!#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z2--500-s_freqsweep_0-5MHz--4.8Vpp_input--40dB_null 65536 10000000 4
+---Amp
+!#sudo ./spence_rtd_acq_for_cal.sh HF--sph_Z2--10dB_delta-amplsweep_0-100dB_4.8Vpp--1MHz_input 65536 10000000 4
+
+
+
+#######################
+##OFFSET MEASUREMENTS##
+#######################
+07/03/2014
+==>Per Professor LaBelle's instruction, I should record the null of each channel
+==>See the table on the Google Doc
+
+
+##############
+##NOTE ON HF##
+##############
+07102014
+
+Dave is testing HF with a signal going straight into the pre-selector (i.e., not via the spheres).
+
+There are two tones present at 4.8MHz and 4.2MHz due to the power supply when there is no input. These two tones disappear when there is any appreciable input signal, which seems to be anything at or above -50dBm. There is also some broadband wash from ~2.8MHz to ~4.2MHz that is pretty faint event at -80dBm, but still present.

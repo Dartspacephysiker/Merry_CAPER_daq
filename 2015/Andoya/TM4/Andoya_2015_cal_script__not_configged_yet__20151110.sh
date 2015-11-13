@@ -1,21 +1,18 @@
 #!/bin/bash
 
-RATE=${3:-20000000}
-NCHAN=${4:-2}
-RTD_DT=1
 
-#Output directory
-#OUTDIR="/data_4TB2"
-OUTDIR="/daq/caldata"
+FIRST=${1:-"Wallops_2015_cal"}
+RATE=${3:-10000}
+NCHAN=${4:-1}
+RTD_DT=0.1
 
-#Filename stuff
-PREFIX=${1:-"countdown-"}
-SUFFIX="-${NCHAN}ch-$((RATE/1000))KHz"
+SUFFIX="--${NCHAN}ch"
 
-FNAME=`date +${PREFIX}%Y%m%d-%H%M%S${SUFFIX}.data`
+#RANGE=0000 # 1 = +-1 Volt, 0 = +-5 Volts
+RANGE=1111 # 1 = +-1 Volt, 0 = +-5 Volts
 
-RANGE=0000 # 1 = +-1 Volt, 0 = +-5 Volts
-
+OUTDIR="/home/spencerh/data/CAPER/Wallops/2015/cals/TM4_HF"
+FNAME="${FIRST}${SUFFIX}.data"
 ERRBUFF="${0} <prefix for outfile, e.g., ELF-ALO--sph_X1L--freqsweep_0-5KHz_50sec_4.8Vpp_0dB> <comedi_read_buffer_size> <digitization rate in Hz>"
 
 if [ $1 ] && [ $2 ] && comedi_config --read-buffer ${2} /dev/comedi0 && comedi_test -s0 /dev/comedi0 >& /dev/null ; then 

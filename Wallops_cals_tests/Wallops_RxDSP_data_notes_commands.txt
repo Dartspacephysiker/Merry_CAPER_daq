@@ -1,0 +1,22 @@
+##########################################
+#DUAL TCP/IP ACQUISITION AND DISPLAY TEST#
+##########################################
+07232014
+At Wallops, and I'm testing whether we can pull in data on two ports simultaneously. It's a little synthetic
+because I'm using Merry to do everything locally. These are the commands:
+
+--Server:
+#cd /usr/src/Wallops_TCPIP
+#sudo ./tcp_player -p 5000,5001 -P "Wallops_dualTCPtest_bothonMerry" -d 0.1 -s 100000 -a 2
+
+--Clients: 
+#cd /usr/src/Wallops_TCPIP/sample_progs/
+#./client /home/spencerh/data/Wallops_TCPdata/master_throughtest-sph_Z1-455kHz-50mV_in-20140716-204529-p5000.data 0.0.0.0 500
+
+#cd /usr/src/Wallops_TCPIP/sample_progs/
+#./client /home/spencerh/data/Wallops_TCPdata/slave_throughtest-null-20140716-204805-p5000.data 0.0.0.0 5001
+
+CONCLUSION
+==========
+It appears that dual acquisition on two TCP/IP ports is totally possible. All of the commands above are 
+just what I used, and things seemed to work fine.
