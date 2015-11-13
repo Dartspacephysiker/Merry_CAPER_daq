@@ -1,5 +1,0 @@
-07102014
-
-Dave is testing HF with a signal going straight into the pre-selector (i.e., not via the spheres). 
-
-There are two tones present at 4.8MHz and 4.2MHz due to the power supply when there is no input. These two tones disappear when there is any appreciable input signal, which seems to be anything at or above -50dBm. There is also some broadband wash from ~2.8MHz to ~4.2MHz that is pretty faint event at -80dBm, but still present. 
