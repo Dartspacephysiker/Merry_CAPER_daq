@@ -24,3 +24,10 @@ sudo ./rtd_script.sh 0 tcp1
 #2015/11/12
 #Doing some check or other on TM2/3. Changed prefix:
 sudo ./tcp_player_highspeed -o /home/spencerh/data/CAPER/Andoya/2015/cals/TM23/20151012_TM23_sanity_check_DELETEME -P final_sanity_check-- -p 5003 -c 2 -r 3 -d 1 -m /tmp/rtd/rtd_tcp1.data -a 6
+
+
+
+###########
+#2015/11/16
+#Turn-on check at science trailer
+sudo ./tcp_player_highspeed -o /home/spencerh/data/CAPER/Andoya/2015/cals/TM23/20151016_TM23_sciencetrailer_check_DELETEME -P sciencetrailer_check-- -p 5003 -c 2 -r 3 -d 1 -m /tmp/rtd/rtd_tcp1.data -a 6
