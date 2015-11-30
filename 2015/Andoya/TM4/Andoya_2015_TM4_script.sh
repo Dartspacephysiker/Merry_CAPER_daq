@@ -18,7 +18,7 @@ DAYSTR=`date +%F_%H%M%S`
 #RANGE=0000 # 1 = +-1 Volt, 0 = +-5 Volts
 RANGE=1111 # 2015/11/10 David verified with me that this is the correct range
 
-OUTDIR="/home/spencerh/data/CAPER/Andoya/2015/cals/TM4_HF"
+OUTDIR="/home/spencerh/data/CAPER/Andoya/2015/TM4"
 FNAME="${FIRST}${SUFFIX}--${DAYSTR}.data"
 ERRBUFF="${0} <Num channels [default: ${NCHAN}]> <digitization rate in Hz [def: ${RATE}]>\nThe prefix for every file is ${FIRST}--<N chan>ch--YYYYMMDD_HHMMSS"
 
